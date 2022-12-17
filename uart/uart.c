@@ -1,3 +1,4 @@
+/* ===== file header ===== */
 /*************************************************************************
 
 	Title:    Interrupt UART library with receive/transmit circular buffers
@@ -91,15 +92,16 @@ Date        Description
 
 ************************************************************************/
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-#include <util/atomic.h>
+/* ===== includes ===== */
+//#include <avr/io.h>
+//#include <avr/interrupt.h>
+//#include <avr/pgmspace.h>
+//#include <util/atomic.h>
 #include "uart.h"
 
-/*
- *  constants and macros
- */
+/* ===== private datatypes ===== */
+
+/* ===== private symbols ===== */
 
 /* size of RX/TX buffers */
 #define UART_RX0_BUFFER_MASK (UART_RX0_BUFFER_SIZE - 1)
@@ -140,6 +142,7 @@ Date        Description
 	#error TX3 buffer size is not a power of 2
 #endif
 
+#if 0 /* TODO: check if the defines are needed */
 #if defined(__AVR_AT90S2313__) \
  || defined(__AVR_AT90S4414__) \
  || defined(__AVR_AT90S4434__) \
@@ -376,10 +379,13 @@ Date        Description
 #else
 	#error "no UART definition for MCU available"
 #endif
+#endif
 
-/*
- *  Module global variables
- */
+/* ===== private constants ===== */
+
+/* ===== public constants ===== */
+
+/* ===== private variables ===== */
 
 #if defined(USART0_ENABLED)
     #if defined(ATMEGA_USART) || defined(ATMEGA_USART0) || defined(AVR1_USART0) || defined(AT90_UART)
@@ -471,6 +477,12 @@ Date        Description
 
 #if defined(AT90_UART) || defined(ATMEGA_USART) || defined(ATMEGA_USART0)  || defined(AVR1_USART0)
 
+/* ===== public variables ===== */
+
+/* ===== private functions ===== */
+
+/* ===== interrupt functions ===== */
+
 ISR(UART0_RECEIVE_INTERRUPT)
 /*************************************************************************
 Function: UART Receive Complete interrupt
@@ -548,6 +560,7 @@ Purpose:  called when the UART is ready to transmit the next byte
     }
 }
 
+/* ===== public functions ===== */
 
 /*************************************************************************
 Function: uart0_init()

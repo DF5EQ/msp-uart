@@ -1,6 +1,4 @@
-#ifndef UART_H
-#define UART_H
-
+/* ===== file header ===== */
 /************************************************************************
 Title:    Interrupt UART library with receive/transmit circular buffers
 Author:   Andy Gock
@@ -77,17 +75,23 @@ were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
  *  @note Based on Atmel Application Note AVR306 and original library by Peter Fleury and Tim Sharpe.
  */
 
+#ifndef UART_H
+#define UART_H
+
+/* ===== includes ===== */
+#include <msp430.h>
+
 /**@{*/
 #include <stdint.h>
-#include <avr/io.h>
+//#include <avr/io.h>
 
-#if (__GNUC__ * 100 + __GNUC_MINOR__) < 304
-#error "This library requires AVR-GCC 3.4 or later, update to newer AVR-GCC compiler !"
-#endif
+//#if (__GNUC__ * 100 + __GNUC_MINOR__) < 304
+//#error "This library requires AVR-GCC 3.4 or later, update to newer AVR-GCC compiler !"
+//#endif
 
-/*
- * constants and macros
- */
+/* ===== public datatypes ===== */
+
+/* ===== public symbols ===== */
 
 /* Enable USART 1, 2, 3 as required */
 /* Can be defined in compiler symbol setup with -D option (preferred) */
@@ -128,69 +132,69 @@ were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
 
 /* Check buffer sizes are not too large for 8-bit positioning */
 
-#if (UART_RX0_BUFFER_SIZE > 256 & !defined(USART0_LARGE_BUFFER))
-	#error "Buffer too large, please use -DUSART0_LARGE_BUFFER switch in compiler options"
-#endif
+//#if (UART_RX0_BUFFER_SIZE > 256 & !defined(USART0_LARGE_BUFFER))
+//	#error "Buffer too large, please use -DUSART0_LARGE_BUFFER switch in compiler options"
+//#endif
 
-#if (UART_RX1_BUFFER_SIZE > 256 & !defined(USART1_LARGE_BUFFER))
-	#error "Buffer too large, please use -DUSART1_LARGE_BUFFER switch in compiler options"
-#endif
+//#if (UART_RX1_BUFFER_SIZE > 256 & !defined(USART1_LARGE_BUFFER))
+//	#error "Buffer too large, please use -DUSART1_LARGE_BUFFER switch in compiler options"
+//#endif
 
-#if (UART_RX2_BUFFER_SIZE > 256 & !defined(USART2_LARGE_BUFFER))
-	#error "Buffer too large, please use -DUSART2_LARGE_BUFFER switch in compiler options"
-#endif
+//#if (UART_RX2_BUFFER_SIZE > 256 & !defined(USART2_LARGE_BUFFER))
+//	#error "Buffer too large, please use -DUSART2_LARGE_BUFFER switch in compiler options"
+//#endif
 
-#if (UART_RX3_BUFFER_SIZE > 256 & !defined(USART3_LARGE_BUFFER))
-	#error "Buffer too large, please use -DUSART3_LARGE_BUFFER switch in compiler options"
-#endif
+//#if (UART_RX3_BUFFER_SIZE > 256 & !defined(USART3_LARGE_BUFFER))
+//	#error "Buffer too large, please use -DUSART3_LARGE_BUFFER switch in compiler options"
+//#endif
 
 /* Check buffer sizes are not too large for *_LARGE_BUFFER operation (16-bit positioning) */
 
-#if (UART_RX0_BUFFER_SIZE > 32768)
-	#error "Buffer too large, maximum allowed is 32768 bytes"
-#endif
+//#if (UART_RX0_BUFFER_SIZE > 32768)
+//	#error "Buffer too large, maximum allowed is 32768 bytes"
+//#endif
 
-#if (UART_RX1_BUFFER_SIZE > 32768)
-	#error "Buffer too large, maximum allowed is 32768 bytes"
-#endif
+//#if (UART_RX1_BUFFER_SIZE > 32768)
+//	#error "Buffer too large, maximum allowed is 32768 bytes"
+//#endif
 
-#if (UART_RX2_BUFFER_SIZE > 32768)
-	#error "Buffer too large, maximum allowed is 32768 bytes"
-#endif
+//#if (UART_RX2_BUFFER_SIZE > 32768)
+//	#error "Buffer too large, maximum allowed is 32768 bytes"
+//#endif
 
-#if (UART_RX3_BUFFER_SIZE > 32768)
-	#error "Buffer too large, maximum allowed is 32768 bytes"
-#endif
+//#if (UART_RX3_BUFFER_SIZE > 32768)
+//	#error "Buffer too large, maximum allowed is 32768 bytes"
+//#endif
 
 /** @brief  UART Baudrate Expression
  *  @param  xtalCpu  system clock in Mhz, e.g. 4000000L for 4Mhz
  *  @param  baudRate baudrate in bps, e.g. 1200, 2400, 9600
  */
-#define UART_BAUD_SELECT(baudRate,xtalCpu) (((xtalCpu)+8UL*(baudRate))/(16UL*(baudRate))-1UL)
+//#define UART_BAUD_SELECT(baudRate,xtalCpu) (((xtalCpu)+8UL*(baudRate))/(16UL*(baudRate))-1UL)
 
 /** @brief  UART Baudrate Expression for ATmega double speed mode
  *  @param  xtalCpu  system clock in Mhz, e.g. 4000000L for 4Mhz
  *  @param  baudRate baudrate in bps, e.g. 1200, 2400, 9600
  */
-#define UART_BAUD_SELECT_DOUBLE_SPEED(baudRate,xtalCpu) ((((xtalCpu)+4UL*(baudRate))/(8UL*(baudRate))-1)|0x8000)
+//#define UART_BAUD_SELECT_DOUBLE_SPEED(baudRate,xtalCpu) ((((xtalCpu)+4UL*(baudRate))/(8UL*(baudRate))-1)|0x8000)
 
 /* test if the size of the circular buffers fits into SRAM */
 
-#if defined(USART0_ENABLED) && ( (UART_RX0_BUFFER_SIZE+UART_TX0_BUFFER_SIZE) >= (RAMEND-0x60))
-	#error "size of UART_RX0_BUFFER_SIZE + UART_TX0_BUFFER_SIZE larger than size of SRAM"
-#endif
+//#if defined(USART0_ENABLED) && ( (UART_RX0_BUFFER_SIZE+UART_TX0_BUFFER_SIZE) >= (RAMEND-0x60))
+//	#error "size of UART_RX0_BUFFER_SIZE + UART_TX0_BUFFER_SIZE larger than size of SRAM"
+//#endif
 
-#if defined(USART1_ENABLED) && ( (UART_RX1_BUFFER_SIZE+UART_TX1_BUFFER_SIZE) >= (RAMEND-0x60))
-	#error "size of UART_RX1_BUFFER_SIZE + UART_TX1_BUFFER_SIZE larger than size of SRAM"
-#endif
+//#if defined(USART1_ENABLED) && ( (UART_RX1_BUFFER_SIZE+UART_TX1_BUFFER_SIZE) >= (RAMEND-0x60))
+//	#error "size of UART_RX1_BUFFER_SIZE + UART_TX1_BUFFER_SIZE larger than size of SRAM"
+//#endif
 
-#if defined(USART2_ENABLED) && ( (UART_RX2_BUFFER_SIZE+UART_RX2_BUFFER_SIZE) >= (RAMEND-0x60))
-	#error "size of UART_RX2_BUFFER_SIZE + UART_TX2_BUFFER_SIZE larger than size of SRAM"
-#endif
+//#if defined(USART2_ENABLED) && ( (UART_RX2_BUFFER_SIZE+UART_RX2_BUFFER_SIZE) >= (RAMEND-0x60))
+//	#error "size of UART_RX2_BUFFER_SIZE + UART_TX2_BUFFER_SIZE larger than size of SRAM"
+//#endif
 
-#if defined(USART3_ENABLED) && ( (UART_RX3_BUFFER_SIZE+UART_RX3_BUFFER_SIZE) >= (RAMEND-0x60))
-	#error "size of UART_RX3_BUFFER_SIZE + UART_TX3_BUFFER_SIZE larger than size of SRAM"
-#endif
+//#if defined(USART3_ENABLED) && ( (UART_RX3_BUFFER_SIZE+UART_RX3_BUFFER_SIZE) >= (RAMEND-0x60))
+//	#error "size of UART_RX3_BUFFER_SIZE + UART_TX3_BUFFER_SIZE larger than size of SRAM"
+//#endif
 
 /*
 ** high byte error return code of uart_getc()
@@ -201,7 +205,8 @@ were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
 #define UART_NO_DATA          0x0100              /**< no receive data available   */
 
 /* Macros, to allow use of legacy names */
-
+/* TODO: delete all this macrocs, functions need to be called uart_*() */
+/*       uart0_*() will be uart_*() and uart[123]_* will be deleted */
 /** @brief Macro to initialize USART0 (only available on selected ATmegas) @see uart0_init */
 #define uart_init(b)      uart0_init(b)
 
@@ -226,9 +231,11 @@ were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
 /** @brief Macro to flush bytes waiting in receive buffer of USART0 @see uart0_flush */
 #define uart_flush()      uart0_flush()
 
-/*
-** function prototypes
-*/
+/* ===== public constants ===== */
+
+/* ===== public variables ===== */
+
+/* ===== public functions ===== */
 
 /**
    @brief   Initialize UART and set baudrate

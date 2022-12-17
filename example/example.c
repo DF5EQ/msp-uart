@@ -1,5 +1,7 @@
+/* ===== file header ===== */
 /*************************************************************************
 
+Example program, based on Andy Gock's example.
 Example program, based on Peter Fluery's example.
 
 *************************************************************************/
@@ -16,20 +18,37 @@ DESCRIPTION:
           This example shows how to use the UART library uart.c
 
 *************************************************************************/
+
+/* ===== includes ===== */
 #include <stdlib.h>
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
+#include <msp430.h>
+//#include <avr/interrupt.h>
+//#include <avr/pgmspace.h>
 
 #include "uart.h"
 
+/* ===== private datatypes ===== */
+
+/* ===== private symbols ===== */
 /* Define CPU frequency in Hz in Makefile or toolchain compiler configuration */
-#ifndef F_CPU
-#error "F_CPU undefined, please define CPU frequency in Hz in Makefile or compiler configuration"
-#endif
+//#ifndef F_CPU
+//#error "F_CPU undefined, please define CPU frequency in Hz in Makefile or compiler configuration"
+//#endif
 
 /* Define UART baud rate here */
 #define UART_BAUD_RATE 9600
+
+/* ===== private constants ===== */
+
+/* ===== public constants ===== */
+
+/* ===== private variables ===== */
+
+/* ===== public variables ===== */
+
+/* ===== private functions ===== */
+
+/* ===== public functions ===== */
 
 int main(void)
 {
@@ -37,19 +56,13 @@ int main(void)
     char buffer[7];
     int8_t num = 134;
 
-    /*
-     *  Initialize UART library, pass baudrate and AVR cpu clock
-     *  with the macro
-     *  UART_BAUD_SELECT() (normal speed mode)
-     *  or
-     *  UART_BAUD_SELECT_DOUBLE_SPEED() (double speed mode)
-     */
-    uart_init(UART_BAUD_SELECT(UART_BAUD_RATE, F_CPU));
+    /* Initialize UART module */
+   uart_init();
 
     /*
      * Now enable interrupt, since UART library is interrupt controlled
      */
-    sei();
+    __bis_SR_register(GIE);
 
     /*
      *  Transmit string to UART
@@ -65,7 +78,7 @@ int main(void)
      */
     uart_puts_P("String stored in FLASH\n");
 
-    /*
+    /* TODO: change comment
      * Use standard avr-libc functions to convert numbers into string
      * before transmitting via UART
      */
@@ -77,7 +90,7 @@ int main(void)
      */
     uart_putc('\r');
 
-    for (;;)
+    while (1)
     {
         /*
          * Get received character from ringbuffer
