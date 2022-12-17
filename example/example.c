@@ -57,10 +57,10 @@ int main(void)
     int8_t num = 134;
 
     /* Initialize UART module */
-   uart_init();
+   uart_init(UART_BAUD_RATE);
 
     /*
-     * Now enable interrupt, since UART library is interrupt controlled
+     * Now enable interrupt, since UART module is interrupt controlled
      */
     __bis_SR_register(GIE);
 
