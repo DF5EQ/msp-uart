@@ -291,20 +291,23 @@ uint16_t uart_peek(void)
 	uint16_t tmptail;
 	uint8_t data;
 
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-		if (UART_RxHead == UART_RxTail) {
-			return UART_NO_DATA;   /* no data available */
-		}
+    /* TODO uart rx interrupt should be disabled during this function             */
+    /*      so that UART_RxHead and UART_RxTail are consistent throughout the run */
+
+    if (UART_RxHead == UART_RxTail)
+    {
+        /* no data available */
+        return UART_NO_DATA;
 	}
 
-	tmptail = (UART_RxTail + 1) & UART_RX0_BUFFER_MASK;
+	/* calculate buffer index */
+	tmptail = (UART_RxTail + 1) & UART_RX_BUFFER_MASK;
 
 	/* get data from receive buffer */
 	data = UART_RxBuf[tmptail];
 
 	return (UART_LastRxError << 8) + data;
-
-} /* uart_peek */
+}
 
 /*************************************************************************
 Function: uart_putc()
