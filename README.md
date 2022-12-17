@@ -1,3 +1,7 @@
+# msp-uart
+
+A port of the original avr-uart from Andy Gock to MSP430 controller.
+
 # avr-uart
 
 An interrupt driven UART Library for 8-bit AVR microcontrollers.
