@@ -55,7 +55,7 @@ int main(void)
 {
     uint16_t c;
     char buffer[7];
-    int8_t num = 134;
+    int8_t num = 42;
 
     system_init();
     uart_init(UART_BAUD_RATE);
@@ -63,49 +63,35 @@ int main(void)
     /* enable interrupt, since UART module is interrupt controlled */
     system_interrupts_enable();
 
-    /*
-     *  Transmit string to UART
-     *  The string is buffered by the uart library in a circular buffer
-     *  and one character at a time is transmitted to the UART using interrupts.
-     *  uart_puts() blocks if it can not write the whole string to the circular
-     *  buffer
-     */
-    uart_puts("String stored in SRAM\n");
+    /* Transmit string to UART                                                         */
+    /* The string is buffered by the uart module in a circular buffer and              */
+    /* one character at a time is transmitted to the UART using interrupts.            */
+    /* uart_puts() blocks if it can not write the whole string to the circular buffer. */
+    uart_puts("\r\nHello World!\r\n");
 
-    /* TODO: change comment
-     * Use standard avr-libc functions to convert numbers into string
-     * before transmitting via UART
-     */
+    /* Use standard functions to convert numbers into string before transmitting */
     itoa(num, buffer, 10); // convert integer into string (decimal format)
     uart_puts(buffer);     // and transmit string to UART
 
-    /*
-     * Transmit single character to UART
-     */
+    /* Transmit single character to UART */
     uart_putc('\r');
+    uart_putc('\n');
 
     while (1)
     {
-        /*
-         * Get received character from ringbuffer
-         * uart_getc() returns in the lower byte the received character and
-         * in the higher byte (bitmask) the last receive error
-         * UART_NO_DATA is returned when no data is available.
-         *
-         */
+        /* Get received character from ringbuffer.                      */
+        /* uart_getc() returns in the lower byte the received character */
+        /* and in the higher byte (bitmask) the last receive error.     */
+        /* UART_NO_DATA is returned when no data is available.          */
         c = uart_getc();
         if (c & UART_NO_DATA)
         {
-            /*
-             * No data available from UART
-             */
+            /* No data available from UART */
         }
         else
         {
-            /*
-             * New data available from UART
-             * Check for Frame or Overrun error
-             */
+            /* New data available from UART */
+            /* Check for Frame or Overrun error */
             if (c & UART_FRAME_ERROR)
             {
                 /* Framing Error detected, i.e no stop bit detected */
@@ -113,25 +99,20 @@ int main(void)
             }
             if (c & UART_OVERRUN_ERROR)
             {
-                /*
-                 * Overrun, a character already present in the UART UDR register was
-                 * not read by the interrupt handler before the next character arrived,
-                 * one or more received characters have been dropped
-                 */
+                /* Overrun, a character already present in the UART register was        */
+                /* not read by the interrupt handler before the next character arrived, */
+                /* one or more received characters have been dropped                    */
                 uart_puts("UART Overrun Error: ");
             }
             if (c & UART_BUFFER_OVERFLOW)
             {
-                /*
-                 * We are not reading the receive buffer fast enough,
-                 * one or more received character have been dropped
-                 */
+                /* We are not reading the receive buffer fast enough, */
+                /* one or more received character have been dropped   */
                 uart_puts("Buffer overflow error: ");
             }
-            /*
-             * Send received character back
-             */
-            uart_putc((unsigned char)c);
+
+            /* Send received character back */
+            uart_putc(c);
         }
     }
 }

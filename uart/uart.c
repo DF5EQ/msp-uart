@@ -329,9 +329,13 @@ void uart_putc(uint8_t data)
 	UART_TxBuf[tmphead] = data;
 	UART_TxHead = tmphead;
 
-	/* enable interrupt */
-    UCA0IFG |= UCTXIFG; /* set transmit interrupt flag */
-    UCA0IE  |= UCTXIE;  /* enable transmit interrupt */
+    /* if transmit interrupt not enabled */
+    if( (UCA0IE & UCTXIE) == 0 )
+    {
+        /* enable interrupt */
+        UCA0IFG |= UCTXIFG; /* set transmit interrupt flag */
+        UCA0IE  |= UCTXIE;  /* enable transmit interrupt */
+    }
 }
 
 /*************************************************************************
