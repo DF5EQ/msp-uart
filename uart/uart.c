@@ -221,80 +221,31 @@ Returns:  none
 **************************************************************************/
 void uart_init(uint16_t baudrate)
 {
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-		UART_TxHead = 0;
-		UART_TxTail = 0;
-		UART_RxHead = 0;
-		UART_RxTail = 0;
-	}
+    /* TODO use baudrate parameter */
 
-#if defined(AT90_UART)
-	/* set baud rate */
-	UBRR = (uint8_t) baudrate;
+	/* set heads and tails to initial positions */
+    UART_TxHead = 0;
+    UART_TxTail = 0;
+    UART_RxHead = 0;
+    UART_RxTail = 0;
 
-	/* enable UART receiver and transmitter and receive complete interrupt */
-	UART0_CONTROL = _BV(RXCIE)|_BV(RXEN)|_BV(TXEN);
+    /* attach port pins to UART eUSCI_A0 */
+    P2SEL1 |=   BIT0 | BIT1;
+    P2SEL0 &= ~(BIT0 | BIT1);
 
-#elif defined(ATMEGA_USART)
-	/* Set baud rate */
-	if (baudrate & 0x8000) {
-		UART0_STATUS = (1<<U2X);  //Enable 2x speed
-		baudrate &= ~0x8000;
-	}
-	UBRRH = (uint8_t) (baudrate>>8);
-	UBRRL = (uint8_t) baudrate;
+    /* configure eUSCI_A0 for UART mode 9600 8N1 */
+    UCA0CTLW0  = UCSWRST;          /* put eUSCI in reset */
+    UCA0CTLW0 |= UCSSEL__SMCLK;    /* BRCLK = SMCLK */
+    UCA0BR0    = 6;                /* see SLAU367P table 30-5 for */
+    UCA0BR1    = 0;                            /* BRCLK = 1MHz    */
+    UCA0MCTLW  = UCBRS5 | UCBRF3 | UCOS16;     /* Baudrate = 9600 */
 
-	/* Enable USART receiver and transmitter and receive complete interrupt */
-	UART0_CONTROL = _BV(RXCIE)|(1<<RXEN)|(1<<TXEN);
+    /* initialize eUSCI_A0 */
+    UCA0CTLW0 &= ~UCSWRST;
 
-	/* Set frame format: asynchronous, 8data, no parity, 1stop bit */
-#ifdef URSEL
-	UCSRC = (1<<URSEL)|(3<<UCSZ0);
-#else
-	UCSRC = (3<<UCSZ0);
-#endif
-
-#elif defined(ATMEGA_USART0)
-	/* Set baud rate */
-	if (baudrate & 0x8000) {
-		UART0_STATUS = (1<<U2X0);  //Enable 2x speed
-		baudrate &= ~0x8000;
-	}
-	UBRR0H = (uint8_t)(baudrate>>8);
-	UBRR0L = (uint8_t) baudrate;
-
-	/* Enable USART receiver and transmitter and receive complete interrupt */
-	UART0_CONTROL = _BV(RXCIE0)|(1<<RXEN0)|(1<<TXEN0);
-
-	/* Set frame format: asynchronous, 8data, no parity, 1stop bit */
-#ifdef URSEL0
-	UCSR0C = (1<<URSEL0)|(3<<UCSZ00);
-#else
-	UCSR0C = (3<<UCSZ00);
-#endif
-
-#elif defined(ATMEGA_UART)
-	/* set baud rate */
-	if (baudrate & 0x8000) {
-		UART0_STATUS = (1<<U2X);  //Enable 2x speed
-		baudrate &= ~0x8000;
-	}
-	UBRRHI = (uint8_t) (baudrate>>8);
-	UBRR   = (uint8_t) baudrate;
-
-	/* Enable UART receiver and transmitter and receive complete interrupt */
-	UART0_CONTROL = _BV(RXCIE)|(1<<RXEN)|(1<<TXEN);
-
-#elif defined(AVR1_USART0)
-    // set the baud rate
-    USART0.BAUD = USART0_BAUD_RATE(baudrate);
-
-    USART0.CTRLA = USART_RXCIE_bm;
-    USART0.CTRLB = USART_TXEN_bm | USART_RXEN_bm | USART_RXMODE_NORMAL_gc;
-    // Default configuration of CTRLC is 8N1 in asynchronous mode
-#endif
-
-} /* uart_init */
+    /* enable receive interrupt */
+    UCA0IE |= UCRXIE;
+}
 
 
 /*************************************************************************
