@@ -374,8 +374,8 @@ Returns:  None
 **************************************************************************/
 void uart_flush(void)
 {
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-		UART_RxHead = UART_RxTail;
-	}
-} /* uart_flush */
+    /* TODO uart rx interrupt should be disabled during this function             */
+    /*      so that UART_RxHead and UART_RxTail are consistent throughout the run */
+    UART_RxHead = UART_RxTail;
+}
 
