@@ -349,24 +349,6 @@ void uart_puts(const char *s)
 }
 
 /*************************************************************************
-Function: uart_puts_p()
-Purpose:  transmit string from program memory to UART
-Input:    program memory string to be transmitted
-Returns:  none
-**************************************************************************/
-void uart_puts_p(const char *progmem_s)
-{
-	register char c;
-
-	while ((c = pgm_read_byte(progmem_s++))) {
-		uart0_putc(c);
-	}
-
-} /* uart_puts_p */
-
-
-
-/*************************************************************************
 Function: uart_available()
 Purpose:  Determine the number of bytes waiting in the receive buffer
 Input:    None
