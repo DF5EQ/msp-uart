@@ -317,37 +317,22 @@ Returns:  none
 **************************************************************************/
 void uart_putc(uint8_t data)
 {
-
-#ifdef USART0_LARGE_BUFFER
-	uint16_t tmphead;
-	uint16_t txtail_tmp;
-
-	tmphead = (UART_TxHead + 1) & UART_TX0_BUFFER_MASK;
-
-	do {
-		ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-			txtail_tmp = UART_TxTail;
-		}
-	} while (tmphead == txtail_tmp); /* wait for free space in buffer */
-#else
 	uint16_t tmphead;
 
-	tmphead = (UART_TxHead + 1) & UART_TX0_BUFFER_MASK;
+	/* calculate buffer index */
+	tmphead = (UART_TxHead + 1) & UART_TX_BUFFER_MASK;
 
-	while (tmphead == UART_TxTail); /* wait for free space in buffer */
-#endif
+    /* wait for free space in buffer */
+	while (tmphead == UART_TxTail);
 
+	/* put data to transmit buffer */
 	UART_TxBuf[tmphead] = data;
 	UART_TxHead = tmphead;
 
-	/* enable UDRE interrupt */
-#if defined(AVR1_USART0)
-    USART0_CTRLA |= USART_DREIE_bm;
-#else
-	UART0_CONTROL |= _BV(UART0_UDRIE);
-#endif
-
-} /* uart_putc */
+	/* enable interrupt */
+    UCA0IFG |= UCTXIFG; /* set transmit interrupt flag */
+    UCA0IE  |= UCTXIE;  /* enable transmit interrupt */
+}
 
 /*************************************************************************
 Function: uart_puts()
@@ -357,12 +342,11 @@ Returns:  none
 **************************************************************************/
 void uart_puts(const char *s)
 {
-	while (*s) {
-		uart0_putc(*s++);
+	while (*s)
+    {
+        uart_putc(*s++);
 	}
-
-} /* uart_puts */
-
+}
 
 /*************************************************************************
 Function: uart_puts_p()
