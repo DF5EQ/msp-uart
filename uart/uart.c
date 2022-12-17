@@ -93,10 +93,6 @@ Date        Description
 ************************************************************************/
 
 /* ===== includes ===== */
-//#include <avr/io.h>
-//#include <avr/interrupt.h>
-//#include <avr/pgmspace.h>
-//#include <util/atomic.h>
 #include "uart.h"
 
 /* ===== private datatypes ===== */
@@ -122,14 +118,17 @@ Date        Description
 /* ===== private variables ===== */
 static volatile uint8_t UART_TxBuf[UART_TX_BUFFER_SIZE];
 static volatile uint8_t UART_RxBuf[UART_RX_BUFFER_SIZE];
+static volatile uint8_t UART_TxHead;
+static volatile uint8_t UART_TxTail;
+static volatile uint8_t UART_RxHead;
+static volatile uint8_t UART_RxTail;
+static volatile uint8_t UART_LastRxError;
 
 /* ===== public variables ===== */
 
 /* ===== private functions ===== */
 
-/* ===== interrupt functions ===== */
-
-ISR(UART0_RECEIVE_INTERRUPT)
+static void uart_rx (void)
 /*************************************************************************
 Function: UART Receive Complete interrupt
 Purpose:  called when the UART has received a character
@@ -141,44 +140,30 @@ Purpose:  called when the UART has received a character
     uint8_t lastRxError;
 
     /* read UART status register and UART data register */
-#if defined(AVR1_USART0)
-    usr  = USART0_RXDATAH;
-    data = USART0.RXDATAL;
-#else
-    usr  = UART0_STATUS;
-    data = UART0_DATA;
-#endif
-
-    /* */
-#if defined(AT90_UART)
-    lastRxError = (usr & (_BV(FE)|_BV(DOR)));
-#elif defined(ATMEGA_USART)
-    lastRxError = (usr & (_BV(FE)|_BV(DOR)));
-#elif defined(ATMEGA_USART0)
-    lastRxError = (usr & (_BV(FE0)|_BV(DOR0)));
-#elif defined(ATMEGA_UART)
-    lastRxError = (usr & (_BV(FE)|_BV(DOR)));
-#elif defined(AVR1_USART0)
-    lastRxError = (usr & (USART_BUFOVF_bm | USART_FERR_bm | USART_PERR_bm));
-#endif
+    data        = UCA0RXBUF;
+    usr         = 0; /* TODO which register is here equivalent to avr's USART0_RXDATAH resp. UART0_STATUS ? */
+    lastRxError = 0; /* TODO what is here equivalent to avr ? */
 
     /* calculate buffer index */
-    tmphead = (UART_RxHead + 1) & UART_RX0_BUFFER_MASK;
+    tmphead = (UART_RxHead + 1) & UART_RX_BUFFER_MASK;
 
-    if (tmphead == UART_RxTail) {
+    if (tmphead == UART_RxTail)
+    {
         /* error: receive buffer overflow */
         lastRxError = UART_BUFFER_OVERFLOW >> 8;
-    } else {
+    }
+    else
+    {
         /* store new index */
         UART_RxHead = tmphead;
+
         /* store received data in buffer */
         UART_RxBuf[tmphead] = data;
     }
     UART_LastRxError = lastRxError;
 }
 
-
-ISR(UART0_TRANSMIT_INTERRUPT)
+static void uart_tx (void)
 /*************************************************************************
 Function: UART Data Register Empty interrupt
 Purpose:  called when the UART is ready to transmit the next byte
@@ -186,23 +171,43 @@ Purpose:  called when the UART is ready to transmit the next byte
 {
     uint16_t tmptail;
 
-    if (UART_TxHead != UART_TxTail) {
+    if (UART_TxHead != UART_TxTail)
+    {
         /* calculate and store new buffer index */
-        tmptail = (UART_TxTail + 1) & UART_TX0_BUFFER_MASK;
+        tmptail = (UART_TxTail + 1) & UART_TX_BUFFER_MASK;
         UART_TxTail = tmptail;
+
         /* get one byte from buffer and write it to UART */
-#if defined(AVR1_USART0)
-        USART0_TXDATAL = UART_TxBuf[tmptail];  /* start transmission */
-#else
-        UART0_DATA = UART_TxBuf[tmptail];  /* start transmission */
-#endif
-    } else {
-        /* tx buffer empty, disable UDRE interrupt */
-#if defined(AVR1_USART0)
-        USART0_CTRLA &= ~USART_DREIE_bm;
-#else
-        UART0_CONTROL &= ~_BV(UART0_UDRIE);
-#endif
+        UCA0TXBUF = UART_TxBuf[tmptail];  /* start transmission */
+    }
+    else
+    {
+        /* tx buffer empty, disable interrupt */
+        UCA0IE &= ~UCTXIE;
+    }
+}
+
+/* ===== interrupt functions ===== */
+
+#pragma vector = USCI_A0_VECTOR
+__interrupt void uart_interrupt (void)
+{
+    switch(UCA0IV)
+    {
+        case 0x00:  // Vector 0: No interrupts
+            break;
+        case 0x02:  // Vector 2: UCRXIFG
+            uart_rx();
+            break;
+        case 0x04:  // Vector 4: UCTXIFG
+            uart_tx();
+            break;
+        case 0x06:  // Vector 6: UCSTTIFG
+            break;
+        case 0x08:  // Vector 8: UCTXCPTIFG
+            break;
+        default:
+            break;
     }
 }
 
