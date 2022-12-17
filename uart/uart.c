@@ -247,7 +247,6 @@ void uart_init(uint16_t baudrate)
     UCA0IE |= UCRXIE;
 }
 
-
 /*************************************************************************
 Function: uart_getc()
 Purpose:  return byte from ringbuffer
@@ -259,23 +258,24 @@ uint16_t uart_getc(void)
 	uint16_t tmptail;
 	uint8_t data;
 
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-		if (UART_RxHead == UART_RxTail) {
-			return UART_NO_DATA;   /* no data available */
-		}
+    /* TODO uart rx interrupt should be disabled during this function             */
+    /*      so that UART_RxHead and UART_RxTail are consistent throughout the run */
+
+    if (UART_RxHead == UART_RxTail)
+    {
+        /* no data available */
+        return UART_NO_DATA;
 	}
 
 	/* calculate / store buffer index */
-	tmptail = (UART_RxTail + 1) & UART_RX0_BUFFER_MASK;
-
+	tmptail = (UART_RxTail + 1) & UART_RX_BUFFER_MASK;
 	UART_RxTail = tmptail;
 
 	/* get data from receive buffer */
 	data = UART_RxBuf[tmptail];
 
 	return (UART_LastRxError << 8) + data;
-
-} /* uart_getc */
+}
 
 /*************************************************************************
 Function: uart_peek()
