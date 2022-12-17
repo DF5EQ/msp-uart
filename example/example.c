@@ -25,6 +25,7 @@ DESCRIPTION:
 //#include <avr/interrupt.h>
 //#include <avr/pgmspace.h>
 
+#include "system.h"
 #include "uart.h"
 
 /* ===== private datatypes ===== */
@@ -59,10 +60,8 @@ int main(void)
     system_init();
     uart_init(UART_BAUD_RATE);
 
-    /*
-     * Now enable interrupt, since UART module is interrupt controlled
-     */
-    __bis_SR_register(GIE);
+    /* enable interrupt, since UART module is interrupt controlled */
+    system_interrupts_enable();
 
     /*
      *  Transmit string to UART
