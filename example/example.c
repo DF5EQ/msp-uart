@@ -73,11 +73,6 @@ int main(void)
      */
     uart_puts("String stored in SRAM\n");
 
-    /*
-     * Transmit string from program memory to UART
-     */
-    uart_puts_P("String stored in FLASH\n");
-
     /* TODO: change comment
      * Use standard avr-libc functions to convert numbers into string
      * before transmitting via UART
@@ -115,7 +110,7 @@ int main(void)
             if (c & UART_FRAME_ERROR)
             {
                 /* Framing Error detected, i.e no stop bit detected */
-                uart_puts_P("UART Frame Error: ");
+                uart_puts("UART Frame Error: ");
             }
             if (c & UART_OVERRUN_ERROR)
             {
@@ -124,7 +119,7 @@ int main(void)
                  * not read by the interrupt handler before the next character arrived,
                  * one or more received characters have been dropped
                  */
-                uart_puts_P("UART Overrun Error: ");
+                uart_puts("UART Overrun Error: ");
             }
             if (c & UART_BUFFER_OVERFLOW)
             {
@@ -132,7 +127,7 @@ int main(void)
                  * We are not reading the receive buffer fast enough,
                  * one or more received character have been dropped
                  */
-                uart_puts_P("Buffer overflow error: ");
+                uart_puts("Buffer overflow error: ");
             }
             /*
              * Send received character back
