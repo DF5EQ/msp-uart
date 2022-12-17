@@ -27,7 +27,7 @@ AS      = msp430-as
 ASFLAGS = -mmcu=$(DEVICE)
 # command and flags for linker
 LD      = msp430-gcc
-LDFLAGS = -mmcu=$(DEVICE) -Wl,-Map,$(basename $@).map user_definitions.x
+LDFLAGS = -mmcu=$(DEVICE) -Wl,-Map,$(basename $@).map
 # command and flags for hex-file creator
 HX      = msp430-objcopy
 HXFLAGS = -O ihex
