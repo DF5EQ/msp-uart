@@ -56,8 +56,8 @@ int main(void)
     char buffer[7];
     int8_t num = 134;
 
-    /* Initialize UART module */
-   uart_init(UART_BAUD_RATE);
+    system_init();
+    uart_init(UART_BAUD_RATE);
 
     /*
      * Now enable interrupt, since UART module is interrupt controlled
