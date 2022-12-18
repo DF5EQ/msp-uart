@@ -66,6 +66,32 @@ The license info for HardwareSerial.h is as follows:
 
 /* ===== private symbols ===== */
 
+/* baudrate settings */
+#define UCBRS(x)  ((x)<<8)
+#define UCBRF(x)  ((x)<<4)
+#undef UCOS16 /* defined in msp430.h -> msp430fr5969.h */
+#define UCOS16(x) ((x)<<0)
+
+/* see SLAU367P table 30-5 for BRCLK=1MHz */
+#if UART_BAUDRATE == 9600
+    #define UCAxBRW     6
+    #define UCAxMCTLW   ( UCBRS(0x20) | UCBRF(8) | UCOS16(1) )
+#elif UART_BAUDRATE == 19200
+    #define UCAxBRW    3
+    #define UCAxMCTLW  ( UCBRS(0x02) | UCBRF(4) | UCOS16(1) )
+#elif UART_BAUDRATE == 38400
+    #define UCAxBRW    1
+    #define UCAxMCTLW  ( UCBRS(0x00) | UCBRF(10) | UCOS16(1) )
+#elif UART_BAUDRATE == 57600
+    #define UCAxBRW    17
+    #define UCAxMCTLW  ( UCBRS(0x4a) | UCBRF(0) | UCOS16(0) )
+#elif UART_BAUDRATE == 115200
+    #define UCAxBRW   8
+    #define UCAxMCTLW ( UCBRS(0xd6) | UCBRF(0) | UCOS16(0) )
+#else
+    #error Baudrate not supported
+#endif
+
 /* size of RX/TX buffers */
 #define UART_RX_BUFFER_MASK (UART_RX_BUFFER_SIZE - 1)
 #define UART_TX_BUFFER_MASK (UART_TX_BUFFER_SIZE - 1)
@@ -201,11 +227,11 @@ void uart_init(uint16_t baudrate)
     P2SEL0 &= ~(BIT0 | BIT1);
 
     /* configure eUSCI_A0 for UART mode 9600 8N1 */
-    UCA0CTLW0  = UCSWRST;                  /* put eUSCI in reset */
-    UCA0CTLW0 |= UCSSEL__SMCLK;            /* BRCLK = SMCLK */
-    UCA0BRW    = 6;                        /* see SLAU367P table 30-5  */
-    UCA0MCTLW  = UCBRS5 | UCBRF3 | UCOS16; /* for 9600 Bd @ BRCLK=1MHz */
-    UCA0CTLW0 &= ~UCSWRST;                 /* release eUSCI from reset */
+    UCA0CTLW0  = UCSWRST;       /* put eUSCI in reset */
+    UCA0CTLW0 |= UCSSEL__SMCLK; /* BRCLK = SMCLK */
+    UCA0BRW    = UCAxBRW;       /* see SLAU367P table 30-5 */
+    UCA0MCTLW  = UCAxMCTLW;     /* see SLAU367P table 30-5 */
+    UCA0CTLW0 &= ~UCSWRST;      /* release eUSCI from reset */
 
     /* enable receive interrupt */
     UCA0IE |= UCRXIE;

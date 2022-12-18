@@ -92,6 +92,8 @@ The license info for HardwareSerial.h is as follows:
 
 /* ===== public symbols ===== */
 
+#define UART_BAUDRATE 9600
+
 /* Set size of receive and transmit buffers */
 #define UART_RX_BUFFER_SIZE 128 /**< Size of the circular receive buffer, must be power of 2 */
 #define UART_TX_BUFFER_SIZE 128 /**< Size of the circular transmit buffer, must be power of 2 */

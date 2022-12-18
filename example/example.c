@@ -37,7 +37,7 @@ DESCRIPTION:
 //#endif
 
 /* Define UART baud rate here */
-#define UART_BAUD_RATE 9600
+//#define UART_BAUD_RATE 9600
 
 /* ===== private constants ===== */
 
@@ -58,7 +58,7 @@ int main(void)
     int8_t num = 42;
 
     system_init();
-    uart_init(UART_BAUD_RATE);
+    uart_init(UART_BAUDRATE);
 
     /* enable interrupt, since UART module is interrupt controlled */
     system_interrupts_enable();
