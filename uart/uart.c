@@ -1,31 +1,24 @@
 /* ===== file header ===== */
 /*************************************************************************
+Title:    Interrupt UART module with receive/transmit circular buffers
+Author:   Peter Bägel
+Software: msp430-gcc
+Hardware: MSP430, tested on EXP430FR5969
+License:  GNU General Public License
+Usage:    see README.md
 
-	Title:    Interrupt UART library with receive/transmit circular buffers
-	Author:   Andy Gock
-	Software: AVR-GCC 4.1, AVR Libc 1.4
-	Hardware: any AVR with built-in UART, tested on AT90S8515 & ATmega8 at 4 Mhz
-	License:  GNU General Public License
-	Usage:    see README.md and Doxygen manual
+Based on original library by
+    Andy Gock
+    Peter Fluery
+    Tim Sharpe
+    Nicholas Zambetti
 
-	Based on original library by Peter Fluery, Tim Sharpe, Nicholas Zambetti.
-
-	https://github.com/andygock/avr-uart
-
-	Updated UART library (this one) by Andy Gock
-	https://github.com/andygock/avr-uart
-
-	Based on updated UART library (this one) by Tim Sharpe
-	http://beaststwo.org/avr-uart/index.shtml
-
-	Based on original library by Peter Fluery
-	http://www.peterfleury.epizy.com/avr-software.html
-
-*************************************************************************/
-
-/*************************************************************************
+https://github.com/andygock/avr-uart
+http://beaststwo.org/avr-uart/index.shtml
+http://www.peterfleury.epizy.com/avr-software.html
 
 LICENSE:
+    Copyright (C) 2022 Peter Bägel (DF5EQ)
 	Copyright (C) 2012 Andy Gock
 	Copyright (C) 2006 Peter Fleury
 
@@ -41,10 +34,10 @@ LICENSE:
 
 *************************************************************************/
 
-/************************************************************************
-uart_available, uart_flush, uart1_available, and uart1_flush functions
-were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
-11 Jan 2009.  The license info for HardwareSerial.h is as follows:
+/*************************************************************************
+uart_available and uart_flush functions were adapted from the Arduino
+HardwareSerial.h library by Tim Sharpe on 11 Jan 2009.
+The license info for HardwareSerial.h is as follows:
 
   HardwareSerial.cpp - Hardware serial library for Wiring
   Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
@@ -64,33 +57,7 @@ were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
   Modified 23 November 2006 by David A. Mellis
-************************************************************************/
-
-/************************************************************************
-Changelog for modifications made by Tim Sharpe, starting with the current
-  library version on his Web site as of 05/01/2009.
-
-Date        Description
-=========================================================================
-05/11/2009  Changed all existing UARTx_RECEIVE_INTERRUPT and UARTx_TRANSMIT_INTERRUPT
-			macros to use the "_vect" format introduced in AVR-Libc
-			v1.4.0.  Had to split the 3290 and 6490 out of their existing
-			macro due to an inconsistency in the UART0_RECEIVE_INTERRUPT
-			vector name (seems like a typo: USART_RX_vect for the 3290/6490
-			vice USART0_RX_vect for the others in the macro).
-			Verified all existing macro register names against the device
-			header files in AVR-Libc v1.6.6 to catch any inconsistencies.
-05/12/2009  Added support for 48P, 88P, 168P, and 328P by adding them to the
-			existing 48/88/168 macro.
-			Added Arduino-style available() and flush() functions for both
-			supported UARTs.  Really wanted to keep them out of the library, so
-			that it would be as close as possible to Peter Fleury's original
-			library, but has scoping issues accessing internal variables from
-			another program.  Go C!
-05/13/2009  Changed Interrupt Service Routine label from the old "SIGNAL" to
-			the "ISR" format introduced in AVR-Libc v1.4.0.
-
-************************************************************************/
+*************************************************************************/
 
 /* ===== includes ===== */
 #include "uart.h"

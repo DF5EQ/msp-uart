@@ -1,18 +1,24 @@
 /* ===== file header ===== */
 /************************************************************************
-Title:    Interrupt UART library with receive/transmit circular buffers
-Author:   Andy Gock
-Software: AVR-GCC 4.1, AVR Libc 1.4
-Hardware: any AVR with built-in UART, tested on AT90S8515 & ATmega8 at 4 Mhz
+Title:    Interrupt UART module with receive/transmit circular buffers
+Author:   Peter Bägel
+Software: msp430-gcc
+Hardware: MSP430, tested on EXP430FR5969
 License:  GNU General Public License
-Usage:    see README.md and Doxygen manual
+Usage:    see README.md
 
-Based on original library by Peter Fluery, Tim Sharpe, Nicholas Zambetti.
+Based on original library by
+    Andy Gock
+    Peter Fluery
+    Tim Sharpe
+    Nicholas Zambetti
 
 https://github.com/andygock/avr-uart
+http://beaststwo.org/avr-uart/index.shtml
+http://www.peterfleury.epizy.com/avr-software.html
 
 LICENSE:
-
+    Copyright (C) 2022 Peter Bägel (DF5EQ)
 	Copyright (C) 2012 Andy Gock
 	Copyright (C) 2006 Peter Fleury
 
@@ -29,9 +35,9 @@ LICENSE:
 ************************************************************************/
 
 /************************************************************************
-uart_available, uart_flush, uart1_available, and uart1_flush functions
-were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
-11 Jan 2009.  The license info for HardwareSerial.h is as follows:
+uart_available and uart_flush functions were adapted from the Arduino
+HardwareSerial.h library by Tim Sharpe on 11 Jan 2009.
+The license info for HardwareSerial.h is as follows:
 
   HardwareSerial.h - Hardware serial library for Wiring
   Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
