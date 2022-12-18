@@ -92,9 +92,9 @@ The license info for HardwareSerial.h is as follows:
 
 /* ===== public symbols ===== */
 
-/* set baudrate */
-#define UART_BRCLK 1000000
-#define UART_BAUDRATE 9600
+/* Set baudrate */
+#define UART_BRCLK 1000000 /* baudrate generator clock in hz */
+#define UART_BAUDRATE 9600 /* baudrate in bit per second */
 
 /* Set size of receive and transmit buffers */
 #define UART_RX_BUFFER_SIZE 128 /**< Size of the circular receive buffer, must be power of 2 */
