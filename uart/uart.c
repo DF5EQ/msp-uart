@@ -201,14 +201,11 @@ void uart_init(uint16_t baudrate)
     P2SEL0 &= ~(BIT0 | BIT1);
 
     /* configure eUSCI_A0 for UART mode 9600 8N1 */
-    UCA0CTLW0  = UCSWRST;          /* put eUSCI in reset */
-    UCA0CTLW0 |= UCSSEL__SMCLK;    /* BRCLK = SMCLK */
-    UCA0BR0    = 6;                /* see SLAU367P table 30-5 for */
-    UCA0BR1    = 0;                            /* BRCLK = 1MHz    */
-    UCA0MCTLW  = UCBRS5 | UCBRF3 | UCOS16;     /* Baudrate = 9600 */
-
-    /* initialize eUSCI_A0 */
-    UCA0CTLW0 &= ~UCSWRST;
+    UCA0CTLW0  = UCSWRST;                  /* put eUSCI in reset */
+    UCA0CTLW0 |= UCSSEL__SMCLK;            /* BRCLK = SMCLK */
+    UCA0BRW    = 6;                        /* see SLAU367P table 30-5  */
+    UCA0MCTLW  = UCBRS5 | UCBRF3 | UCOS16; /* for 9600 Bd @ BRCLK=1MHz */
+    UCA0CTLW0 &= ~UCSWRST;                 /* release eUSCI from reset */
 
     /* enable receive interrupt */
     UCA0IE |= UCRXIE;
