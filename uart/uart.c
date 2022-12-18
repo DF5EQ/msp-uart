@@ -66,6 +66,97 @@ The license info for HardwareSerial.h is as follows:
 
 /* ===== private symbols ===== */
 
+/* see SLAU367P chapter 30.3.10 Setting a Baud Rate */
+#define FACTOR_N (UART_BRCLK/UART_BAUDRATE)
+#if FACTOR_N > 17
+    #define OS16 1
+    #define UCBRx FACTOR_N/16
+    #define UCBRFx FACTOR_N%16
+#else
+    #define OS16 0
+    #define UCBRx FACTOR_N
+    #define UCBRFx 0
+#endif
+#define FRACTION (10000ULL * UART_BRCLK / UART_BAUDRATE - UART_BRCLK / UART_BAUDRATE * 10000ULL)
+#if FRACTION < 529
+    #define UCBRSx 0x00
+#elif FRACTION < 715
+    #define UCBRSx 0x01
+#elif FRACTION < 835
+    #define UCBRSx 0x02
+#elif FRACTION < 1001
+    #define UCBRSx 0x04
+#elif FRACTION < 1252
+    #define UCBRSx 0x08
+#elif FRACTION < 1430
+    #define UCBRSx 0x10
+#elif FRACTION < 1670
+    #define UCBRSx 0x20
+#elif FRACTION < 2147
+    #define UCBRSx 0x11
+#elif FRACTION < 2224
+    #define UCBRSx 0x21
+#elif FRACTION < 2503
+    #define UCBRSx 0x22
+#elif FRACTION < 3000
+    #define UCBRSx 0x44
+#elif FRACTION < 3335
+    #define UCBRSx 0x25
+#elif FRACTION < 3575
+    #define UCBRSx 0x49
+#elif FRACTION < 3753
+    #define UCBRSx 0x4a
+#elif FRACTION < 4003
+    #define UCBRSx 0x52
+#elif FRACTION < 4286
+    #define UCBRSx 0x92
+#elif FRACTION < 4378
+    #define UCBRSx 0x53
+#elif FRACTION < 5002
+    #define UCBRSx 0x55
+#elif FRACTION < 5715
+    #define UCBRSx 0xaa
+#elif FRACTION < 6003
+    #define UCBRSx 0x6b
+#elif FRACTION < 6254
+    #define UCBRSx 0xad
+#elif FRACTION < 6432
+    #define UCBRSx 0xb5
+#elif FRACTION < 6667
+    #define UCBRSx 0xb6
+#elif FRACTION < 7001
+    #define UCBRSx 0xd6
+#elif FRACTION < 7147
+    #define UCBRSx 0xb7
+#elif FRACTION < 7503
+    #define UCBRSx 0xbb
+#elif FRACTION < 7861
+    #define UCBRSx 0xdd
+#elif FRACTION < 8004
+    #define UCBRSx 0xed
+#elif FRACTION < 8333
+    #define UCBRSx 0xee
+#elif FRACTION < 8464
+    #define UCBRSx 0xbf
+#elif FRACTION < 8572
+    #define UCBRSx 0xdf
+#elif FRACTION < 8751
+    #define UCBRSx 0xef
+#elif FRACTION < 9004
+    #define UCBRSx 0xf7
+#elif FRACTION < 9170
+    #define UCBRSx 0xfb
+#elif FRACTION < 9288
+    #define UCBRSx 0xfd
+#elif FRACTION < 10000
+    #define UCBRSx 0xfe
+#else
+    #error no lookup value for UCBRSx
+#endif
+
+#define UCAxBRW     UCBRx
+#define UCAxMCTLW   ( UCBRSx << 8 | UCBRFx << 4 | OS16 )
+
 /* size of RX/TX buffers */
 #define UART_RX_BUFFER_MASK (UART_RX_BUFFER_SIZE - 1)
 #define UART_TX_BUFFER_MASK (UART_TX_BUFFER_SIZE - 1)
@@ -179,17 +270,14 @@ __interrupt void uart_interrupt (void)
 }
 
 /* ===== public functions ===== */
-
 /*************************************************************************
 Function: uart_init()
 Purpose:  initialize UART and set baudrate
 Input:    baudrate using macro UART_BAUD_SELECT()
 Returns:  none
 **************************************************************************/
-void uart_init(uint16_t baudrate)
+void uart_init(void)
 {
-    /* TODO use baudrate parameter */
-
 	/* set heads and tails to initial positions */
     UART_TxHead = 0;
     UART_TxTail = 0;
@@ -201,14 +289,11 @@ void uart_init(uint16_t baudrate)
     P2SEL0 &= ~(BIT0 | BIT1);
 
     /* configure eUSCI_A0 for UART mode 9600 8N1 */
-    UCA0CTLW0  = UCSWRST;          /* put eUSCI in reset */
-    UCA0CTLW0 |= UCSSEL__SMCLK;    /* BRCLK = SMCLK */
-    UCA0BR0    = 6;                /* see SLAU367P table 30-5 for */
-    UCA0BR1    = 0;                            /* BRCLK = 1MHz    */
-    UCA0MCTLW  = UCBRS5 | UCBRF3 | UCOS16;     /* Baudrate = 9600 */
-
-    /* initialize eUSCI_A0 */
-    UCA0CTLW0 &= ~UCSWRST;
+    UCA0CTLW0  = UCSWRST;       /* put eUSCI in reset */
+    UCA0CTLW0 |= UCSSEL__SMCLK; /* BRCLK = SMCLK */
+    UCA0BRW    = UCAxBRW;       /* see SLAU367P table 30-5 */
+    UCA0MCTLW  = UCAxMCTLW;     /* see SLAU367P table 30-5 */
+    UCA0CTLW0 &= ~UCSWRST;      /* release eUSCI from reset */
 
     /* enable receive interrupt */
     UCA0IE |= UCRXIE;

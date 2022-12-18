@@ -36,9 +36,6 @@ DESCRIPTION:
 //#error "F_CPU undefined, please define CPU frequency in Hz in Makefile or compiler configuration"
 //#endif
 
-/* Define UART baud rate here */
-#define UART_BAUD_RATE 9600
-
 /* ===== private constants ===== */
 
 /* ===== public constants ===== */
@@ -58,7 +55,7 @@ int main(void)
     int8_t num = 42;
 
     system_init();
-    uart_init(UART_BAUD_RATE);
+    uart_init();
 
     /* enable interrupt, since UART module is interrupt controlled */
     system_interrupts_enable();

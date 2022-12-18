@@ -92,6 +92,10 @@ The license info for HardwareSerial.h is as follows:
 
 /* ===== public symbols ===== */
 
+/* Set baudrate */
+#define UART_BRCLK 1000000 /* baudrate generator clock in hz */
+#define UART_BAUDRATE 9600 /* baudrate in bit per second */
+
 /* Set size of receive and transmit buffers */
 #define UART_RX_BUFFER_SIZE 128 /**< Size of the circular receive buffer, must be power of 2 */
 #define UART_TX_BUFFER_SIZE 128 /**< Size of the circular transmit buffer, must be power of 2 */
@@ -107,13 +111,12 @@ The license info for HardwareSerial.h is as follows:
 /* ===== public variables ===== */
 
 /* ===== public functions ===== */
-
 /**
    @brief   Initialize UART and set baudrate
    @param   baudrate Specify baudrate using macro UART_BAUD_SELECT()
    @return  none
 */
-extern void uart_init(uint16_t baudrate);
+extern void uart_init(void);
 
 /**
  *  @brief   Get received byte from ringbuffer
