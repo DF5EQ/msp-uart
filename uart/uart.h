@@ -92,6 +92,8 @@ The license info for HardwareSerial.h is as follows:
 
 /* ===== public symbols ===== */
 
+/* set baudrate */
+#define UART_BRCLK 1000000
 #define UART_BAUDRATE 9600
 
 /* Set size of receive and transmit buffers */
@@ -109,6 +111,7 @@ The license info for HardwareSerial.h is as follows:
 /* ===== public variables ===== */
 
 /* ===== public functions ===== */
+void uart_debug (void);
 
 /**
    @brief   Initialize UART and set baudrate
