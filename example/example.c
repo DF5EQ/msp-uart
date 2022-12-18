@@ -55,7 +55,7 @@ int main(void)
     int8_t num = 42;
 
     system_init();
-    uart_init(42);
+    uart_init();
 
     /* enable interrupt, since UART module is interrupt controlled */
     system_interrupts_enable();
@@ -73,8 +73,6 @@ int main(void)
     /* Transmit single character to UART */
     uart_putc('\r');
     uart_putc('\n');
-
-    uart_debug();
 
     while (1)
     {

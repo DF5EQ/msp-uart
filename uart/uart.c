@@ -270,22 +270,13 @@ __interrupt void uart_interrupt (void)
 }
 
 /* ===== public functions ===== */
-void uart_debug (void)
-{
-    char buffer[30];
-
-     itoa(OS16,   buffer, 10); uart_puts("OS16   "); uart_puts(buffer); uart_puts("\r\n");
-    ultoa(UCBRx,  buffer, 10); uart_puts("UCBRx  "); uart_puts(buffer); uart_puts("\r\n");
-    ultoa(UCBRFx, buffer, 10); uart_puts("UCBRFx "); uart_puts(buffer); uart_puts("\r\n");
-     itoa(UCBRSx, buffer, 16); uart_puts("UCBRSx "); uart_puts(buffer); uart_puts("\r\n");
-}
 /*************************************************************************
 Function: uart_init()
 Purpose:  initialize UART and set baudrate
 Input:    baudrate using macro UART_BAUD_SELECT()
 Returns:  none
 **************************************************************************/
-void uart_init(uint16_t baudrate)
+void uart_init(void)
 {
 	/* set heads and tails to initial positions */
     UART_TxHead = 0;
