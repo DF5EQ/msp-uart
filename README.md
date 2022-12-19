@@ -20,47 +20,30 @@ for buffering received and transmitted data.
 
 ## Setting up
 
-### Define USARTs enabled and buffer sizes
+### Define UARTs enabled and buffer sizes
 
-The `UART_RXn_BUFFER_SIZE` and `UART_TXn_BUFFER_SIZE` symbols define
-the size of the circular buffers in bytes. These values **must be a power of 2**.
+The `UART_RX_BUFFER_SIZE` and `UART_TX_BUFFER_SIZE` symbols define
+the size of the circular buffers in bytes.
+These values **must be a power of 2**.
 You may need to adapt this symbols to your target and your application by adding into your compiler options:
 
-    -DUART_RXn_BUFFER_SIZE=nn -DUART_TXn_BUFFER_SIZE=nn
+    -DUART_RX_BUFFER_SIZE=nn -DUART_TX_BUFFER_SIZE=nn
 
-`RXn` and `TXn` refer to the UART number, for UART3 with 128 byte buffers, add:
+This module supports MSP430 devices with build in UART.
+Tested only for MSP430FR5969 but should work for other MSP430.
 
-    -DUART_RX3_BUFFER_SIZE=128 -DUART_TX3_BUFFER_SIZE=128
+### Define UART baudrate generator frequency
 
-UART0 is always enabled by default, to enable the other available UARTs, add the following to your compiler's symbol options for the relevant UART (also known as USART) number.
+Define `UART_BRCLK` in your Makefile or compiler examples.
+Example, if you're running a 1 MHz baudrate generator clock, then use:
 
-    -DUSART1_ENABLED -DUSART2_ENABLED -DUSART3_ENABLED
-
-To enable large buffer support (over 256 bytes, up to 2^15 bytes) use:
-
-    -DUSARTn_LARGE_BUFFER
-
-Where `n` is the USART number. The maximum buffer size is 32768 bytes.
-
-This library supports AVR devices with up to 4 hardware USARTs.
-
-### Define CPU frequency
-
-Define `F_CPU` in your Makefile or compiler examples. Example, if you're running a 8 MHz clock, then use:
-
-    -DF_CPU=8000000UL
+    -DUART_BRCLK=1000000UL
 
 ### Compiler flags
 
-AVR/GNU C compiler requires the `-std=gnu99` flag.
+msp430-gcc compiler requires no special flags concerning this module.
 
 ## Documentation
-
-Doxygen based documentation can be viwed at:
-
-* HTML: <https://andygock.github.io/avr-uart-documentation/html/index.html>
-* PDF: <https://andygock.github.io/avr-uart-documentation/latex/refman.pdf>
-* RTF: <https://andygock.github.io/avr-uart-documentation/rtf/refman.rtf>
 
 ## Notes
 
@@ -68,6 +51,6 @@ Doxygen based documentation can be viwed at:
 
 When the RX circular buffer is full, and it receives further data from the UART, a buffer overflow condition occurs. Any new data is dropped. The RX buffer must be read before any more incoming data from the UART is placed into the RX buffer.
 
-If the TX buffer is full, and new data is sent to it using one of the `uartN_put*()` functions, this function will loop and wait until the buffer is not full any more. It is important to make sure you have not disabled your UART transmit interrupts (`TXEN*`) elsewhere in your application (e.g with `cli()`) before calling the `uartN_put*()` functions, as the application will lock up. The UART interrupts are automatically enabled when you use the `uartN_init()` functions. This is probably not the idea behaviour, I'll probably fix this some time.
+If the TX buffer is full, and new data is sent to it using one of the `uart_put*()` functions, this function will loop and wait until the buffer is not full any more. It is important to make sure you have not disabled your UART transmit interrupts elsewhere in your application before calling the `uart_put*()` functions, as the application will lock up. The UART interrupts are automatically enabled when you use the `uart_init()` function. This is probably not the ideal behaviour, maybe changed some time.
 
-For now, make sure `TXEN*` interrupts are enabled when calling `uartN_put*()` functions. This should not be an issue unless you have code elsewhere purposely turning it off.
+For now, make sure interrupts are enabled when calling `uart_put*()` functions. This should not be an issue unless you have code elsewhere purposely turning it off.
