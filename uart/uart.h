@@ -31,7 +31,6 @@ LICENSE:
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-
 ************************************************************************/
 
 /************************************************************************
@@ -58,12 +57,6 @@ The license info for HardwareSerial.h is as follows:
 ************************************************************************/
 
 /**
- *  @defgroup avr-uart UART Library
- *  @code #include <uart.h> @endcode
- *
- *  @brief Interrupt UART library using the built-in UART with transmit and receive circular buffers.
- *  @see README.md
- *
  *  This library can be used to transmit and receive data through the built in UART.
  *
  *  An interrupt is generated when the UART has finished transmitting or
@@ -76,9 +69,6 @@ The license info for HardwareSerial.h is as follows:
  *  You need to define these buffer sizes as a symbol in your compiler settings or in uart.h
  *
  *  See README.md for more detailed information. Especially that relating to symbols: USARTn_ENABLED and USARTn_LARGE_BUFFER
- *
- *  @author Andy Gock <andy@gock.net>
- *  @note Based on Atmel Application Note AVR306 and original library by Peter Fleury and Tim Sharpe.
  */
 
 #ifndef UART_H
@@ -112,63 +102,53 @@ The license info for HardwareSerial.h is as follows:
 
 /* ===== public functions ===== */
 /**
-   @brief   Initialize UART and set baudrate
-   @param   baudrate Specify baudrate using macro UART_BAUD_SELECT()
-   @return  none
+    Initialize UART and set baudrate
+    parameters: UART_BRCLK and UART_BAUDRATE as #define
+    return    : none
 */
 extern void uart_init(void);
 
 /**
- *  @brief   Get received byte from ringbuffer
+ * Get received byte from ringbuffer
  *
  * Returns in the lower byte the received character and in the
  * higher byte the last receive error.
  * UART_NO_DATA is returned when no data is available.
  *
- *  @return  lower byte:  received byte from ringbuffer
- *  @return  higher byte: last receive status
- *           - \b 0 successfully received data from UART
- *           - \b UART_NO_DATA
- *             <br>no receive data available
- *           - \b UART_BUFFER_OVERFLOW
- *             <br>Receive ringbuffer overflow.
- *             We are not reading the receive buffer fast enough,
- *             one or more received character have been dropped
- *           - \b UART_OVERRUN_ERROR
- *             <br>Overrun condition by UART.
- *             A character already present in the UART UDR register was
- *             not read by the interrupt handler before the next character arrived,
- *             one or more received characters have been dropped.
- *           - \b UART_FRAME_ERROR
- *             <br>Framing Error by UART
+ *  return: lower byte:  received byte from ringbuffer
+ *          higher byte: last receive status
+ *                       0 - successfully received data from UART
+ *            UART_NO_DATA - no receive data available
+ *    UART_BUFFER_OVERFLOW - receive ringbuffer overflow
+ *                           We are not reading the receive buffer fast enough,
+ *                           one or more received character have been dropped
+ *      UART_OVERRUN_ERROR - Overrun condition by UART
+ *                           A character already present in the UART register was
+ *                           not read by the interrupt handler before the next character arrived,
+ *                           one or more received characters have been dropped.
+ *        UART_FRAME_ERROR - Framing Error by UART
  */
 extern uint16_t uart_getc(void);
 
 /**
- *  @brief   Peek at next byte in ringbuffer
+ * Peek at next byte in ringbuffer
  *
  * Returns the next byte (character) of incoming UART data without removing it from the
- * internal ring buffer. That is, successive calls to uartN_peek() will return the same
- * character, as will the next call to uartN_getc().
+ * internal ring buffer. That is, successive calls to uart_peek() will return the same
+ * character, as will the next call to uart_getc().
  *
- * UART_NO_DATA is returned when no data is available.
- *
- *  @return  lower byte:  next byte in ringbuffer
- *  @return  higher byte: last receive status
- *           - \b 0 successfully received data from UART
- *           - \b UART_NO_DATA
- *             <br>no receive data available
- *           - \b UART_BUFFER_OVERFLOW
- *             <br>Receive ringbuffer overflow.
- *             We are not reading the receive buffer fast enough,
- *             one or more received character have been dropped
- *           - \b UART_OVERRUN_ERROR
- *             <br>Overrun condition by UART.
- *             A character already present in the UART UDR register was
- *             not read by the interrupt handler before the next character arrived,
- *             one or more received characters have been dropped.
- *           - \b UART_FRAME_ERROR
- *             <br>Framing Error by UART
+ * return: lower byte:  next byte in ringbuffer
+ *         higher byte: last receive status
+ *                      0 - successfully received data from UART
+ *           UART_NO_DATA - no receive data available
+ *   UART_BUFFER_OVERFLOW - Receive ringbuffer overflow
+ *                          We are not reading the receive buffer fast enough,
+ *                          one or more received character have been dropped
+ *     UART_OVERRUN_ERROR - Overrun condition by UART
+ *                          A character already present in the UART UDR register was
+ *                          not read by the interrupt handler before the next character arrived,
+ *                          one or more received characters have been dropped.
+ *       UART_FRAME_ERROR - Framing Error by UART
  */
 extern uint16_t uart_peek(void);
 
@@ -179,41 +159,39 @@ extern uint16_t uart_peek(void);
  */
 extern void uart_putc(uint8_t data);
 
-
 /**
- *  @brief   Put string to ringbuffer for transmitting via UART
- *
- *  The string is buffered by the uart library in a circular buffer
- *  and one character at a time is transmitted to the UART using interrupts.
- *  Blocks if it can not write the whole string into the circular buffer.
- *
- *  @param   s string to be transmitted
- *  @return  none
- */
-extern void uart_puts(const char *s);
-
-
-/**
- * @brief    Put string from program memory to ringbuffer for transmitting via UART.
+ * Put string to ringbuffer for transmitting via UART
  *
  * The string is buffered by the uart library in a circular buffer
  * and one character at a time is transmitted to the UART using interrupts.
  * Blocks if it can not write the whole string into the circular buffer.
  *
- * @param    s program memory string to be transmitted
- * @return   none
- * @see      uart0_puts_P
+ * parameters: s - string to be transmitted
+ * return    : none
+ */
+extern void uart_puts(const char *s);
+
+/**
+ * Put string from program memory to ringbuffer for transmitting via UART.
+ *
+ * The string is buffered by the uart library in a circular buffer
+ * and one character at a time is transmitted to the UART using interrupts.
+ * Blocks if it can not write the whole string into the circular buffer.
+ *
+ * parameters: s - program memory string to be transmitted
+ * return    : none 
  */
 extern void uart_puts_p(const char *s);
 
 /**
- *  @brief   Return number of bytes waiting in the receive buffer
- *  @return  bytes waiting in the receive buffer
+ * Return number of bytes waiting in the receive buffer
+ * parameters: none
+ * return    : bytes waiting in the receive buffer
  */
 extern uint16_t uart_available(void);
 
 /**
- *  @brief   Flush bytes waiting in receive buffer
+ * Flush bytes waiting in receive buffer
  */
 extern void uart_flush(void);
 
