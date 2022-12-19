@@ -9,11 +9,11 @@
 /* ===== public datatypes ===== */
 
 /* ===== public symbols ===== */
-#define SYSTEM_DCOCLK   16000000
-#define SYSTEM_DIVM     1
-#define SYSTEM_DIVS     16
-#define SYSTEM_MCLK     (SYSTEM_DCOCLK/SYSTEM_DIVM)
-#define SYSTEM_SMCLK    (SYSTEM_DCOCLK/SYSTEM_DIVS)
+#define SYSTEM_DCOCLK 16000000
+#define SYSTEM_DIVM   1
+#define SYSTEM_DIVS   16
+#define SYSTEM_MCLK   (SYSTEM_DCOCLK/SYSTEM_DIVM)
+#define SYSTEM_SMCLK  (SYSTEM_DCOCLK/SYSTEM_DIVS)
 
 /* ===== public constants ===== */
 
