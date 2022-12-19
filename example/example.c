@@ -20,8 +20,6 @@ DESCRIPTION: This example shows how to use the UART module uart.c and uart.h
 /* ===== includes ===== */
 #include <stdlib.h>
 #include <msp430.h>
-//#include <avr/interrupt.h>
-//#include <avr/pgmspace.h>
 
 #include "system.h"
 #include "uart.h"
@@ -29,10 +27,6 @@ DESCRIPTION: This example shows how to use the UART module uart.c and uart.h
 /* ===== private datatypes ===== */
 
 /* ===== private symbols ===== */
-/* Define CPU frequency in Hz in Makefile or toolchain compiler configuration */
-//#ifndef F_CPU
-//#error "F_CPU undefined, please define CPU frequency in Hz in Makefile or compiler configuration"
-//#endif
 
 /* ===== private constants ===== */
 
