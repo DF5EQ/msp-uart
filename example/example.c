@@ -10,12 +10,10 @@ Example program, based on Peter Fluery's example.
 
 Title:    Example program for the Interrupt controlled UART library
 Author:   Peter Fleury <pfleury@gmx.ch>   http://tinyurl.com/peterfleury
-File:     $Id: test_uart.c,v 1.7 2015/01/31 17:46:31 peter Exp $
-Software: AVR-GCC 4.x
-Hardware: AVR with built-in UART/USART
+Software: msp430-gcc
+Hardware: MSP403FR5969 may be usable for other MSP430
 
-DESCRIPTION:
-          This example shows how to use the UART library uart.c
+DESCRIPTION: This example shows how to use the UART module uart.c and uart.h
 
 *************************************************************************/
 
