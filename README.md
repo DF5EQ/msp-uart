@@ -2,7 +2,7 @@
 
 A port of the original avr-uart from Andy Gock to MSP430 controller.
 
-# avr-uart
+## avr-uart
 
 An interrupt driven UART Library for 8-bit AVR microcontrollers.
 
@@ -44,6 +44,8 @@ Example, if you're running a 1 MHz baudrate generator clock, then use:
 msp430-gcc compiler requires no special flags concerning this module.
 
 ## Documentation
+
+see comments in uart.h and uart.c
 
 ## Notes
 
