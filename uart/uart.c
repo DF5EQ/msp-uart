@@ -1,11 +1,11 @@
 /* ===== file header ===== */
 /*************************************************************************
-Title:    Interrupt UART module with receive/transmit circular buffers
-Author:   Peter Bägel
+Title   : Interrupt UART module with receive/transmit circular buffers
+Author  : Peter Bägel
 Software: msp430-gcc
 Hardware: MSP430, tested on EXP430FR5969
-License:  GNU General Public License
-Usage:    see README.md
+License : GNU General Public License
+Usage   : see README.md
 
 Based on original library by
     Andy Gock
@@ -185,11 +185,11 @@ static volatile uint8_t UART_LastRxError;
 
 /* ===== private functions ===== */
 
-static void uart_rx (void)
 /*************************************************************************
 Function: UART Receive Complete interrupt
-Purpose:  called when the UART has received a character
-**************************************************************************/
+Purpose : called when the UART has received a character
+*************************************************************************/
+static void uart_rx (void)
 {
     uint16_t tmphead;
     uint8_t data;
@@ -220,11 +220,11 @@ Purpose:  called when the UART has received a character
     UART_LastRxError = lastRxError;
 }
 
-static void uart_tx (void)
 /*************************************************************************
 Function: UART Data Register Empty interrupt
-Purpose:  called when the UART is ready to transmit the next byte
+Purpose : called when the UART is ready to transmit the next byte
 **************************************************************************/
+static void uart_tx (void)
 {
     uint16_t tmptail;
 
@@ -251,17 +251,17 @@ __interrupt void uart_interrupt (void)
 {
     switch(UCA0IV)
     {
-        case 0x00:  // Vector 0: No interrupts
+        case 0x00:  /* Vector 0: No interrupts */
             break;
-        case 0x02:  // Vector 2: UCRXIFG
+        case 0x02:  /* Vector 2: UCRXIFG */
             uart_rx();
             break;
-        case 0x04:  // Vector 4: UCTXIFG
+        case 0x04:  /* Vector 4: UCTXIFG */
             uart_tx();
             break;
-        case 0x06:  // Vector 6: UCSTTIFG
+        case 0x06:  /* Vector 6: UCSTTIFG */
             break;
-        case 0x08:  // Vector 8: UCTXCPTIFG
+        case 0x08:  /* Vector 8: UCTXCPTIFG */
             break;
         default:
             break;
@@ -270,10 +270,11 @@ __interrupt void uart_interrupt (void)
 
 /* ===== public functions ===== */
 /*************************************************************************
-Function: uart_init()
-Purpose:  initialize UART and set baudrate
-Input:    baudrate using macro UART_BAUD_SELECT()
-Returns:  none
+Purpose : initialize UART and set baudrate
+Input   : baudrate using defines
+          UART_BRCLK    - baudrate generator clock in hz
+          UART_BAUDRATE - baudrate in bit per second
+Returns : none
 **************************************************************************/
 void uart_init(void)
 {
@@ -299,10 +300,10 @@ void uart_init(void)
 }
 
 /*************************************************************************
-Function: uart_getc()
-Purpose:  return byte from ringbuffer
-Returns:  lower byte:  received byte from ringbuffer
-          higher byte: last receive error
+Purpose: return byte from ringbuffer
+Input  : none
+Returns: low byte  - received byte from ringbuffer
+         high byte - last receive error
 **************************************************************************/
 uint16_t uart_getc(void)
 {
@@ -329,13 +330,13 @@ uint16_t uart_getc(void)
 }
 
 /*************************************************************************
-Function: uart_peek()
-Purpose:  Returns the next byte (character) of incoming UART data without
-          removing it from the ring buffer. That is, successive calls to
-		  uartN_peek() will return the same character, as will the next
-		  call to uartN_getc()
-Returns:  lower byte:  next byte in ring buffer
-          higher byte: last receive error
+Purpose: Returns the next byte (character) of incoming UART data without
+         removing it from the ring buffer. That is, successive calls to
+		 uart_peek() will return the same character, as will the next
+		 call to uart_getc()
+Input  : none
+Returns: low byte  - next byte in ring buffer
+         high byte - last receive error
 **************************************************************************/
 uint16_t uart_peek(void)
 {
@@ -361,10 +362,9 @@ uint16_t uart_peek(void)
 }
 
 /*************************************************************************
-Function: uart_putc()
-Purpose:  write byte to ringbuffer for transmitting via UART
-Input:    byte to be transmitted
-Returns:  none
+Purpose: write byte to ringbuffer for transmitting via UART
+Input  : byte to be transmitted
+Returns: none
 **************************************************************************/
 void uart_putc(uint8_t data)
 {
@@ -390,10 +390,9 @@ void uart_putc(uint8_t data)
 }
 
 /*************************************************************************
-Function: uart_puts()
-Purpose:  transmit string to UART
-Input:    string to be transmitted
-Returns:  none
+Purpose: transmit string to UART
+Input  : string to be transmitted
+Returns: none
 **************************************************************************/
 void uart_puts(const char *s)
 {
@@ -404,10 +403,9 @@ void uart_puts(const char *s)
 }
 
 /*************************************************************************
-Function: uart_available()
-Purpose:  Determine the number of bytes waiting in the receive buffer
-Input:    None
-Returns:  Integer number of bytes in the receive buffer
+Purpose: Determine the number of bytes waiting in the receive buffer
+Input  : none
+Returns: Number of bytes in the receive buffer
 **************************************************************************/
 uint16_t uart_available(void)
 {
@@ -422,10 +420,9 @@ uint16_t uart_available(void)
 }
 
 /*************************************************************************
-Function: uart_flush()
-Purpose:  Flush bytes waiting the receive buffer. Actually ignores them.
-Input:    None
-Returns:  None
+Purpose: Flush bytes waiting the receive buffer. Actually ignores them.
+Input  : none
+Returns: none
 **************************************************************************/
 void uart_flush(void)
 {

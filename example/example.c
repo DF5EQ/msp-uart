@@ -1,20 +1,16 @@
 /* ===== file header ===== */
 /*************************************************************************
-
 Example program, based on Andy Gock's example.
 Example program, based on Peter Fluery's example.
-
 *************************************************************************/
 
 /*************************************************************************
-
-Title:    Example program for the Interrupt controlled UART library
-Author:   Peter Fleury <pfleury@gmx.ch>   http://tinyurl.com/peterfleury
-Software: msp430-gcc
-Hardware: MSP403FR5969 may be usable for other MSP430
-
-DESCRIPTION: This example shows how to use the UART module uart.c and uart.h
-
+Title      : Example program for the Interrupt controlled UART library
+Author     : Peter Fleury <pfleury@gmx.ch> http://tinyurl.com/peterfleury
+Software   : msp430-gcc
+Hardware   : MSP403FR5969 may be usable for other MSP430
+Description: This example shows how to use the UART module
+             (uart.c and uart.h)
 *************************************************************************/
 
 /* ===== includes ===== */
@@ -59,8 +55,8 @@ int main(void)
     uart_puts("\r\nHello World!\r\n");
 
     /* Use standard functions to convert numbers into string before transmitting */
-    itoa(num, buffer, 10); // convert integer into string (decimal format)
-    uart_puts(buffer);     // and transmit string to UART
+    itoa(num, buffer, 10);
+    uart_puts(buffer);
 
     /* Transmit single character to UART */
     uart_putc('\r');
