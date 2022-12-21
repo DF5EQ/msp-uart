@@ -412,11 +412,10 @@ uint16_t uart_available(void)
 {
 	uint16_t ret;
 
-    /* TODO uart rx interrupt should be disabled during this function             */
-    /*      so that UART_RxHead and UART_RxTail are consistent throughout the run */
-
-    ret = (UART_RX_BUFFER_SIZE + UART_RxHead - UART_RxTail) & UART_RX_BUFFER_MASK;
-
+    ATOMIC_BLOCK_RESTORESTATE
+    (
+        ret = (UART_RX_BUFFER_SIZE + UART_RxHead - UART_RxTail) & UART_RX_BUFFER_MASK;
+    )
 	return ret;
 }
 
