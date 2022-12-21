@@ -317,7 +317,7 @@ uint16_t uart_getc(void)
     {
         /* no data available */
         return UART_NO_DATA;
-	}
+    }
 
 	/* calculate / store buffer index */
 	tmptail = (UART_RxTail + 1) & UART_RX_BUFFER_MASK;
