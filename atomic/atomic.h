@@ -38,7 +38,7 @@
 /* Changes:                                                                  */
 /*   - no use of for loop                                                    */
 /*   - block to be surrounded by () instead of {}                            */
-/*   - four separate macros instead of two with two possible parameters      */
+/*   - four macros instead of two with parameters                            */
 /*     ATOMIC_BLOCK(   ATOMIC_RESTORESTATE) -->    ATOMIC_BLOCK_RESTORESTATE */
 /*     ATOMIC_BLOCK(   ATOMIC_FORCEON)      -->    ATOMIC_BLOCK_FORCEON      */
 /*  NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE) --> NONATOMIC_BLOCK_RESTORESTATE */
@@ -74,8 +74,9 @@
 /*    int main(void)                                                         */
 /*    {                                                                      */
 /*       ...                                                                 */
-/*       ctr = 0x200;                                                        */
+/*       ctr = 0x00020000;                                                   */
 /*       start_timer();                                                      */
+/*       __eint();                                                           */
 /*       while (ctr != 0)                                                    */
 /*         // wait                                                           */
 /*           ;                                                               */
@@ -83,15 +84,15 @@
 /*    }                                                                      */
 /*                                                                           */
 /*  There is a chance where the main context will exit its wait loop when    */
-/*  the variable ctr just reached the value 0xFF.  This happens because the  */
-/*  compiler cannot natively access a 32-bit variable atomically in an       */
-/*  16-bit CPU. So the variable is for example at 0x00010000, the compiler   */
-/*  then tests the low word for 0, which succeeds. It then proceeds to test  */
-/*  the high word, but that moment the ISR triggers, and the main context is */
-/*  interrupted. The ISR will decrement the variable from 0x00010000 to      */
-/*  0x0000FFFF, and the main context proceeds. It now tests the high word of */
-/*  the variable which is (now) also 0, so it concludes the variable has     */
-/*  reached 0, and terminates the loop.                                      */
+/*  the variable ctr just reached the value 0x0000FFFF.  This happens        */
+/*  because the compiler cannot natively access a 32-bit variable atomically */
+/*  in an 16-bit CPU. So the variable is for example at 0x00010000, the      */
+/*  compiler then tests the low word for 0, which succeeds. It then proceeds */
+/*  to test the high word, but that moment the ISR triggers, and the main    */
+/*  context is interrupted. The ISR will decrement the variable from         */
+/*  0x00010000 to 0x0000FFFF, and the main context proceeds. It now tests    */
+/*  the high word of the variable which is (now) also 0, so it concludes the */
+/*  variable has reached 0, and terminates the loop.                         */
 /*                                                                           */
 /*  Using the macros from this header file, the above code can be rewritten: */
 /*                                                                           */
@@ -108,7 +109,7 @@
 /*  int main(void)                                                           */
 /*  {                                                                        */
 /*    ...                                                                    */
-/*    ctr = 0x200;                                                           */
+/*    ctr = 0x00020000;                                                      */
 /*    start_timer();                                                         */
 /*    __eint();                                                              */
 /*    uint32_t ctr_copy;                                                     */
