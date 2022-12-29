@@ -102,12 +102,15 @@ See README.md for more detailed information.
 /* ===== public variables ===== */
 
 /* ===== public functions ===== */
+#define putchar uart_putc
+#define getchar uart_getc
+#define puts    uart_puts
+
 void     uart_init      (void);
 uint16_t uart_getc      (void);
 uint16_t uart_peek      (void);
 void     uart_putc      (uint8_t data);
 void     uart_puts      (const char *s);
-void     uart_puts_p    (const char *s);
 uint16_t uart_available (void);
 void     uart_flush     (void);
 

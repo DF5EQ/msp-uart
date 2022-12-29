@@ -59,8 +59,8 @@ int main(void)
     uart_puts(buffer);
 
     /* Transmit single character to UART */
-    uart_putc('\r');
-    uart_putc('\n');
+    putchar('\r');
+    putchar('\n');
 
     while (1)
     {
@@ -68,7 +68,7 @@ int main(void)
         /* uart_getc() returns in the lower byte the received character */
         /* and in the higher byte (bitmask) the last receive error.     */
         /* UART_NO_DATA is returned when no data is available.          */
-        c = uart_getc();
+        c = getchar();
         if (c & UART_NO_DATA)
         {
             /* No data available from UART */
@@ -97,7 +97,7 @@ int main(void)
             }
 
             /* Send received character back */
-            uart_putc(c);
+            putchar(c);
         }
     }
 }
